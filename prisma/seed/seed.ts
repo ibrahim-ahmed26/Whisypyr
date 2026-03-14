@@ -1,20 +1,15 @@
 import { prisma } from "@/app/lib/prisma";
 import { supabaseAdmin } from "@/app/lib/supabase/admin";
-const main = async () => {
-  const { data, error } = await supabaseAdmin.auth.admin.createUser({
+const createProfile = async () => {
+  const { data: user } = await supabaseAdmin.auth.admin.createUser({
     email: "ibrahim@gmail.com",
-    password: "admin123",
+    password: "admin@123",
     email_confirm: true,
   });
-  if (error) {
-    console.error(error.message);
-  }
-  return data;
-};
-const createProfile = async () => {
   await prisma.profile.deleteMany();
   await prisma.profile.create({
     data: {
+      id: user.user?.id,
       email: "ibrahim@gmail.com",
       name: "ibrahim",
       role: "ADMIN",
@@ -22,5 +17,4 @@ const createProfile = async () => {
   });
 };
 createProfile().catch((err) => err.message);
-main();
 createProfile();
