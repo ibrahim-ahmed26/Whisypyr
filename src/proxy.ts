@@ -4,12 +4,19 @@ import { URL } from "url";
 
 export async function middleware(request: NextRequest) {
   const supabase = await getServerClient();
-  const { data, error } = await supabase.auth.getUser();
-  if (error || !data.user) {
-    return NextResponse.redirect(new URL("/login", request.url));
+  const { data } = await supabase.auth.getUser();
+  if (request.nextUrl.pathname.startsWith("/crm") && !data.user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
   }
-  return NextResponse.next();
+  if (data.user && request.nextUrl.pathname.startsWith("/login")) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/crm";
+    return NextResponse.redirect(url);
+  }
+  return NextResponse.next({ request });
 }
 export const config = {
-  matcher: ["/crm", "/crm/:path*"], // make sure only runs this middle ware on these routes
+  matcher: ["/crm", "/crm/:path*,/login"], // make sure only runs this middle ware on these routes
 };
