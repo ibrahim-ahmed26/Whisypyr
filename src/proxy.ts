@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getServerClient } from "./app/lib/supabase/server";
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const supabase = await getServerClient();
   const { data } = await supabase.auth.getUser();
   if (request.nextUrl.pathname.startsWith("/crm") && !data.user) {
@@ -11,11 +11,11 @@ export async function middleware(request: NextRequest) {
   }
   if (data.user && request.nextUrl.pathname.startsWith("/login")) {
     const url = request.nextUrl.clone();
-    url.pathname = "/crm";
+    url.pathname = "/dashboard";
     return NextResponse.redirect(url);
   }
   return NextResponse.next({ request });
 }
 export const config = {
-  matcher: ["/crm", "/crm/:path*,/login"], // make sure only runs this middle ware on these routes
+  matcher: ["/dashboard", "/leads", "/login"], // make sure only runs this middle ware on these routes
 };
