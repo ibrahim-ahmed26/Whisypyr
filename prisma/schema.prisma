@@ -21,10 +21,37 @@ model Profile {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  lead      Lead[]
 }
 
 enum Role {
   ADMIN
   MANAGER
   AGENT
+}
+
+model Lead {
+  id          String     @id @default(uuid())
+  name        String
+  email       String
+  phoneNumber String
+  stage       LeadStages @default(NEW)
+  status      LeadStatus @default(OPEN)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  assignTo    Profile?   @relation(fields: [assignToId], references: [id])
+  assignToId  String?
+}
+
+enum LeadStatus {
+  OPEN
+  WON
+  LOST
+}
+
+enum LeadStages {
+  NEW
+  CONTACTED
+  QUALIFIED
+  NEGOTIATING
 }
