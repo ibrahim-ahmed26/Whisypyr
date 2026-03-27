@@ -1,5 +1,6 @@
 import { prisma } from "@/app/lib/prisma";
-import { Prisma } from "@/generated/prisma/client";
+import { ActivityType, Prisma } from "@/generated/prisma/client";
+import { CreateLeadInput } from "./schema";
 export function buildLeadWhereClause(profileId: string): Prisma.LeadWhereInput {
   return {
     assignToId: profileId,
@@ -14,5 +15,27 @@ export async function fetchLead(
     where,
     take: pageSize,
     skip: (page - 1) * pageSize,
+  });
+}
+export async function createLead(data: CreateLeadInput, profileId: string) {
+  return prisma.$transaction(async (tx) => {
+    const lead = await tx.lead.create({
+      data: {
+        name: data.name,
+        phoneNumber: data.phoneNumber,
+        email: data.email,
+        assignTo: data.assignToId
+          ? { connect: { id: data.assignToId } }
+          : undefined,
+      },
+    });
+    await tx.activity.create({
+      data: {
+        leadId: lead.id,
+        actorId: profileId,
+        type: ActivityType.LEAD_CREATED,
+      },
+    });
+    return lead;
   });
 }

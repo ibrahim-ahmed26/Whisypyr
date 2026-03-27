@@ -13,15 +13,16 @@ datasource db {
 }
 
 model Profile {
-  id        String   @id @default(uuid())
-  email     String   @unique
-  name      String
-  role      Role
-  avatarUrl String?
-  isActive  Boolean  @default(true)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  lead      Lead[]
+  id         String     @id @default(uuid())
+  email      String     @unique
+  name       String
+  role       Role
+  avatarUrl  String?
+  isActive   Boolean    @default(true)
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  lead       Lead[]
+  activities Activity[]
 }
 
 enum Role {
@@ -41,6 +42,18 @@ model Lead {
   updatedAt   DateTime   @updatedAt
   assignTo    Profile?   @relation(fields: [assignToId], references: [id])
   assignToId  String?
+  activities  Activity[]
+}
+
+model Activity {
+  id        String       @id @default(uuid())
+  leadId    String
+  lead      Lead         @relation(fields: [leadId], references: [id])
+  actorId   String
+  actor     Profile      @relation(fields: [actorId], references: [id])
+  content   String?
+  type      ActivityType
+  createdAt DateTime     @default(now())
 }
 
 enum LeadStatus {
@@ -54,4 +67,17 @@ enum LeadStages {
   CONTACTED
   QUALIFIED
   NEGOTIATING
+}
+
+enum ActivityType {
+  LEAD_CREATED
+  NOTE
+  CALL_ATTEMPT
+  STATUS_CHANGE
+  STAGE_CHANGE
+  ASSIGNMENT_CHANGE
+  REMINDER_CREATED
+  ATTACHMENT_ADDED
+  AI_LEAD_BRIEF_GENERATED
+  AI_FOLLOWUP_DRAFT_GENERATED
 }
