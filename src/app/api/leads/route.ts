@@ -7,14 +7,14 @@ import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {
-    await getLeadsHandler(request);
+    return await getLeadsHandler(request);
   } catch (error) {
     return handleLeadError(error);
   }
 }
 export async function POST(request: NextRequest) {
   try {
-    await createLeadsHandler(request);
+    return await createLeadsHandler(request);
   } catch (error) {
     return handleLeadError(error);
   }
