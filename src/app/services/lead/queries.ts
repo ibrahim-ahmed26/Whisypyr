@@ -11,11 +11,15 @@ export async function fetchLead(
   pageSize: number,
   page: number,
 ) {
-  await prisma.lead.findMany({
-    where,
-    take: pageSize,
-    skip: (page - 1) * pageSize,
-  });
+  const [leads, total] = await prisma.$transaction([
+    prisma.lead.findMany({
+      where,
+      take: pageSize,
+      skip: (page - 1) * pageSize,
+    }),
+    prisma.lead.count({ where }),
+  ]);
+  return { leads, total };
 }
 export async function createLead(data: CreateLeadInput, profileId: string) {
   return prisma.$transaction(async (tx) => {

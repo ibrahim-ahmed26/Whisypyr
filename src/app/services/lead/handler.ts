@@ -15,8 +15,8 @@ export async function getLeadsHandler(request: NextRequest) {
     pageSize,
   });
   const where = buildLeadWhereClause(profile.id);
-  const leads = await fetchLead(where, params.pageSize, params.page);
-  return NextResponse.json({ data: leads }, { status: 200 });
+  const { leads, total } = await fetchLead(where, params.pageSize, params.page);
+  return NextResponse.json({ data: leads, total }, { status: 200 });
 }
 export async function createLeadsHandler(request: NextRequest) {
   // authentication
