@@ -1,3 +1,9 @@
+import { Providers } from "../Providers";
+
 export default function layout({ children }: { children: React.ReactNode }) {
-  return <div>{children}</div>;
+  return (
+    <div>
+      <Providers>{children}</Providers>
+    </div>
+  );
 }

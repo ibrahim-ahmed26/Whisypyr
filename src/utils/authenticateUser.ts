@@ -30,8 +30,8 @@ export async function authenticateUser(allowedRoles: Role[]) {
   if (!profile.isActive) {
     throw new AuthenticationError("Profile is not active", 403);
   }
-  if (allowedRoles && !allowedRoles.includes(profile.role)) {
-    throw new AuthenticationError("Unkown Role", 404);
+  if (allowedRoles.length > 0 && !allowedRoles.includes(profile.role)) {
+    throw new AuthenticationError("Unkown Role", 403);
   }
   return profile;
 }

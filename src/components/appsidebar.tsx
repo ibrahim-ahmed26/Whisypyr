@@ -17,7 +17,11 @@ import {
 import { Role } from "@/generated/prisma/enums";
 import Link from "next/link";
 import { AppSidebarFooter } from "./appsidebar-footer";
-export default function AppSidebar({ role }: { role: Role }) {
+interface AppSidebarProps {
+  role: Role;
+  name: string;
+}
+export default function AppSidebar({ role, name }: AppSidebarProps) {
   const mainMenuItems = [
     { name: "dashboard", href: "/dashboard", icon: <LayoutDashboard /> },
     { name: "leads", href: "/leads", icon: <BriefcaseBusiness /> },
@@ -69,7 +73,7 @@ export default function AppSidebar({ role }: { role: Role }) {
           </SidebarGroup>
         )}
       </SidebarContent>
-      <AppSidebarFooter />
+      <AppSidebarFooter profileName={name} />
     </Sidebar>
   );
 }

@@ -14,8 +14,10 @@ import {
 } from "@/components/ui/sidebar";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/app/lib/supabase/client";
-
-export function AppSidebarFooter() {
+interface AppSidebarFooterProps {
+  profileName: string;
+}
+export function AppSidebarFooter({ profileName }: AppSidebarFooterProps) {
   const router = useRouter();
   async function handleSignOut() {
     await supabase.auth.signOut();
@@ -30,7 +32,7 @@ export function AppSidebarFooter() {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <SidebarMenuButton>
-                  <User2 /> Username
+                  <User2 /> {profileName}
                   <ChevronUp className="ml-auto" />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
