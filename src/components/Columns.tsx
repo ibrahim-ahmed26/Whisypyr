@@ -52,4 +52,12 @@ export const columns: ColumnDef<Lead>[] = [
       );
     },
   },
+  {
+    accessorKey: "createdAt",
+    header: "Created At",
+  },
+  {
+    accessorKey: "updatedAt",
+    header: "Updated At",
+  },
 ];

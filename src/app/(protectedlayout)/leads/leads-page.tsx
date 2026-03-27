@@ -19,7 +19,7 @@ export function LeadsTable() {
     );
   const totalPages = Math.ceil(leads.total / pageSize);
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 px-4 py-5">
       <DataTable columns={columns} data={leads.data} />
       <div className="flex items-center justify-end gap-2">
         <p className="text-sm text-muted-foreground">
