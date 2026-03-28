@@ -17,6 +17,7 @@ export function LeadsTable() {
     return (
       <p className="px-8 py-4 text-red-400 font-bold">Something went wrong</p>
     );
+  console.log("leads", leads.data.leads);
   const totalPages = Math.ceil(leads.total / pageSize);
   return (
     <div className="flex flex-col gap-4 px-4 py-5">

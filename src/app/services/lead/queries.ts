@@ -3,7 +3,7 @@ import { ActivityType, Prisma } from "@/generated/prisma/client";
 import { CreateLeadInput } from "./schema";
 export function buildLeadWhereClause(profileId: string): Prisma.LeadWhereInput {
   return {
-    assignToId: profileId,
+    OR: [{ assignToId: profileId }, { assignToId: null }],
   };
 }
 export async function fetchLead(
@@ -16,6 +16,7 @@ export async function fetchLead(
       where,
       take: pageSize,
       skip: (page - 1) * pageSize,
+      orderBy: { createdAt: "desc" },
     }),
     prisma.lead.count({ where }),
   ]);
@@ -28,9 +29,6 @@ export async function createLead(data: CreateLeadInput, profileId: string) {
         name: data.name,
         phoneNumber: data.phoneNumber,
         email: data.email,
-        assignTo: data.assignToId
-          ? { connect: { id: data.assignToId } }
-          : undefined,
       },
     });
     await tx.activity.create({

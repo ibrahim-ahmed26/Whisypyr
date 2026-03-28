@@ -1,9 +1,22 @@
 import { Lead } from "@/generated/prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
+import { useRouter } from "next/navigation";
 export const columns: ColumnDef<Lead>[] = [
   {
     accessorKey: "name",
     header: "Name",
+    cell: ({ row }) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      const router = useRouter();
+      return (
+        <span
+          className="cursor-pointer hover:underline font-medium"
+          onClick={() => router.push(`/leads/${row.original.id}`)}
+        >
+          {row.getValue("name")}
+        </span>
+      );
+    },
   },
   {
     accessorKey: "email",
@@ -54,10 +67,13 @@ export const columns: ColumnDef<Lead>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: "Created At",
-  },
-  {
-    accessorKey: "updatedAt",
-    header: "Updated At",
+    header: "Created",
+    cell: ({ row }) => {
+      return new Date(row.getValue("createdAt")).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    },
   },
 ];
