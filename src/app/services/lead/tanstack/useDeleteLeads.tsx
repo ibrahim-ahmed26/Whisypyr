@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export function useDeleteLeads() {
   const queryClient = useQueryClient();
@@ -9,9 +10,10 @@ export function useDeleteLeads() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["leads"] });
       router.push("/leads");
+      toast.success("Lead Deleted Successfully");
     },
     onError: (err: Error) => {
-      console.error("Failed to delete lead:", err);
+      toast.error(err.message);
     },
   });
 }

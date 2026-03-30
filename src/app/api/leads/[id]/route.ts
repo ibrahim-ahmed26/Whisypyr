@@ -26,4 +26,3 @@ export async function DELETE(
     return handleLeadError(error);
   }
 }
-

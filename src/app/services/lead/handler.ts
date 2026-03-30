@@ -44,7 +44,7 @@ export async function updateLeads(request: NextRequest, id: string) {
   const lead = await updateLead(id, data);
   return NextResponse.json({ data: lead }, { status: 200 });
 }
-export async function deleteLeads(id: string) {
+export async function deleteLeads(id: string, request: NextRequest) {
   await authenticateUser([Role.ADMIN, Role.MANAGER]);
   await deleteLead(id);
   return NextResponse.json({ message: "Lead Deleted" }, { status: 200 });

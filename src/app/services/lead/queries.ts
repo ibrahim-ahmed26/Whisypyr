@@ -48,7 +48,13 @@ export async function updateLead(leadId: string, data: UpdateLeadInput) {
   });
 }
 export async function deleteLead(id: string) {
-  return prisma.lead.delete({
-    where: { id },
+  // why transaction? we need to delete the activities related to the lead as well, and we want to make sure that both operations succeed or fail together
+  return prisma.$transaction(async (tx) => {
+    await tx.activity.deleteMany({
+      where: { leadId: id },
+    });
+    return tx.lead.delete({
+      where: { id },
+    });
   });
 }
