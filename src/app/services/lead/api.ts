@@ -23,3 +23,10 @@ export async function updateLead(id: string, data: UpdateLeadInput) {
   if (!response.ok) throw new Error("OOPS Failed to Update Lead");
   return response.json();
 }
+export async function deleteLead(id: string) {
+  const response = await fetch(`/api/leads/${id}`, {
+    method: "DELETE",
+  });
+  if (!response.ok) throw new Error("OOPS Failed to Delete Lead");
+  return response.json();
+}

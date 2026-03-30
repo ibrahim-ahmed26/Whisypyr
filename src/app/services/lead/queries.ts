@@ -47,3 +47,8 @@ export async function updateLead(leadId: string, data: UpdateLeadInput) {
     data,
   });
 }
+export async function deleteLead(id: string) {
+  return prisma.lead.delete({
+    where: { id },
+  });
+}

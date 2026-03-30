@@ -17,6 +17,7 @@ import { Input } from "./ui/input";
 import { useUpdateLeads } from "@/app/services/lead/tanstack/useUpdateLeads";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useDeleteLeads } from "@/app/services/lead/tanstack/useDeleteLeads";
 type LeadWithRelations = Prisma.LeadGetPayload<{
   include: {
     activities: {
@@ -34,6 +35,7 @@ export default function LeadDetailedPage({
 }) {
   const router = useRouter();
   const { mutate, isPending } = useUpdateLeads();
+  const { mutate: deleteMutate, isPending: isDeletePending } = useDeleteLeads();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(lead.name);
   const [email, setEmail] = useState(lead.email);
@@ -43,6 +45,11 @@ export default function LeadDetailedPage({
       { id: lead.id, data: { status } },
       { onSuccess: () => router.refresh() },
     );
+  }
+  function handleDelete() {
+    if (confirm("Are you sure you want to delete this lead?")) {
+      deleteMutate(lead.id);
+    }
   }
   function handleStageChange(stage: LeadStages) {
     mutate(
@@ -108,6 +115,14 @@ export default function LeadDetailedPage({
               onClick={() => setIsEditing(false)}
             >
               Cancel
+            </Button>
+            <Button
+              variant="outline"
+              className="bg-red-500 text-white hover:bg-red-600 hover:text-white transition-all cursor-pointer"
+              onClick={handleDelete}
+              disabled={isDeletePending}
+            >
+              {isDeletePending ? "Deleting..." : "Delete"}
             </Button>
           </div>
         ) : (

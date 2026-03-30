@@ -10,6 +10,7 @@ import {
   buildLeadWhereClause,
   createLead,
   updateLead,
+  deleteLead,
 } from "./queries";
 import { Role } from "@/generated/prisma/enums";
 
@@ -37,9 +38,14 @@ export async function createLeadsHandler(request: NextRequest) {
   return NextResponse.json({ data: lead }, { status: 201 });
 }
 export async function updateLeads(request: NextRequest, id: string) {
-  const profile = await authenticateUser([Role.ADMIN, Role.MANAGER]);
+  await authenticateUser([Role.ADMIN, Role.MANAGER]);
   const body = await request.json();
   const data = updateLeadServiceSchema.parse(body);
   const lead = await updateLead(id, data);
   return NextResponse.json({ data: lead }, { status: 200 });
+}
+export async function deleteLeads(id: string) {
+  await authenticateUser([Role.ADMIN, Role.MANAGER]);
+  await deleteLead(id);
+  return NextResponse.json({ message: "Lead Deleted" }, { status: 200 });
 }
