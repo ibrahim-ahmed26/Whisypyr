@@ -11,7 +11,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { useCreateLeads } from "@/app/services/lead/useCreateLeads";
+import { useCreateLeads } from "@/app/services/lead/tanstack/useCreateLeads";
 
 export default function Leads() {
   const [open, setOpen] = useState(false);

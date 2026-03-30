@@ -1,3 +1,4 @@
+import { LeadStages, LeadStatus } from "@/generated/prisma/enums";
 import { z } from "zod";
 
 export const leadServiceSchema = z.object({
@@ -13,3 +14,13 @@ export const createLeadServiceSchema = z.object({
   note: z.string().optional(),
 });
 export type CreateLeadInput = z.infer<typeof createLeadServiceSchema>;
+export const updateLeadServiceSchema = z.object({
+  name: z.string().min(1).optional(),
+  phoneNumber: z.string().min(8).max(15).optional(),
+  email: z.email().optional(),
+  note: z.string().optional(),
+  status: z.enum(LeadStatus).optional(),
+  stage: z.enum(LeadStages).optional(),
+  assignToId: z.string().optional(),
+});
+export type UpdateLeadInput = z.infer<typeof updateLeadServiceSchema>;

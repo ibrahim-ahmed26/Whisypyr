@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { createLead } from "./api";
+import { createLead } from "../api";
 import toast from "react-hot-toast";
 
 export function useCreateLeads(onSuccess?: () => void) {

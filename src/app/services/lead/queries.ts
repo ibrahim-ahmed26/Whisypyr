@@ -1,6 +1,6 @@
 import { prisma } from "@/app/lib/prisma";
 import { ActivityType, Prisma } from "@/generated/prisma/client";
-import { CreateLeadInput } from "./schema";
+import { CreateLeadInput, UpdateLeadInput } from "./schema";
 export function buildLeadWhereClause(profileId: string): Prisma.LeadWhereInput {
   return {
     OR: [{ assignToId: profileId }, { assignToId: null }],
@@ -39,5 +39,11 @@ export async function createLead(data: CreateLeadInput, profileId: string) {
       },
     });
     return lead;
+  });
+}
+export async function updateLead(leadId: string, data: UpdateLeadInput) {
+  return prisma.lead.update({
+    where: { id: leadId },
+    data,
   });
 }

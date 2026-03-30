@@ -1,7 +1,16 @@
 import { authenticateUser } from "@/utils/authenticateUser";
 import { NextRequest, NextResponse } from "next/server";
-import { createLeadServiceSchema, leadServiceSchema } from "./schema";
-import { fetchLead, buildLeadWhereClause, createLead } from "./queries";
+import {
+  createLeadServiceSchema,
+  leadServiceSchema,
+  updateLeadServiceSchema,
+} from "./schema";
+import {
+  fetchLead,
+  buildLeadWhereClause,
+  createLead,
+  updateLead,
+} from "./queries";
 import { Role } from "@/generated/prisma/enums";
 
 export async function getLeadsHandler(request: NextRequest) {
@@ -26,4 +35,11 @@ export async function createLeadsHandler(request: NextRequest) {
   const data = createLeadServiceSchema.parse(body);
   const lead = await createLead(data, profile.id);
   return NextResponse.json({ data: lead }, { status: 201 });
+}
+export async function updateLeads(request: NextRequest, id: string) {
+  const profile = await authenticateUser([Role.ADMIN, Role.MANAGER]);
+  const body = await request.json();
+  const data = updateLeadServiceSchema.parse(body);
+  const lead = await updateLead(id, data);
+  return NextResponse.json({ data: lead }, { status: 200 });
 }
