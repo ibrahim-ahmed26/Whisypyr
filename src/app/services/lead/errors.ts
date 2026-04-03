@@ -3,7 +3,6 @@ import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 
 export function handleLeadError(error: unknown) {
-  console.error("Lead Error:", error); // 👈 add this
   if (error instanceof AuthenticationError) {
     NextResponse.json({ error: error.message }, { status: error.statusCode });
   }

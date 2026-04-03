@@ -40,3 +40,9 @@ export const createActivitySchema = z
     }
   });
 export type CreateActivityInput = z.infer<typeof createActivitySchema>;
+export const getLeadActivitesSchema = z.object({
+  leadId: z.uuid(),
+  page: z.coerce.number().min(1).default(1),
+  pageSize: z.coerce.number().min(1).max(10).default(1),
+});
+export type GetLeadActivitesInput = z.infer<typeof getLeadActivitesSchema>;

@@ -1,6 +1,8 @@
 import { prisma } from "@/app/lib/prisma";
 import { ActivityType, Prisma } from "@/generated/prisma/client";
 import { CreateLeadInput, UpdateLeadInput } from "./schema";
+import { ActivityService } from "../activites";
+import { buildLeadChangeActivities } from "./helpers";
 export function buildLeadWhereClause(profileId: string): Prisma.LeadWhereInput {
   return {
     OR: [{ assignToId: profileId }, { assignToId: null }],
@@ -41,10 +43,35 @@ export async function createLead(data: CreateLeadInput, profileId: string) {
     return lead;
   });
 }
-export async function updateLead(leadId: string, data: UpdateLeadInput) {
-  return prisma.lead.update({
+export async function updateLead(
+  leadId: string,
+  data: UpdateLeadInput,
+  actorId: string,
+) {
+  const existingLead = await prisma.lead.findUnique({
     where: { id: leadId },
-    data,
+  });
+
+  if (!existingLead) throw new Error("Lead not found");
+
+  const activities = buildLeadChangeActivities({
+    leadId,
+    actorId,
+    existingLead,
+    newLead: data,
+  });
+
+  return prisma.$transaction(async (tx) => {
+    const updatedLead = await tx.lead.update({
+      where: { id: leadId },
+      data,
+    });
+
+    const activitiesCreated = await ActivityService.create(activities, tx);
+    if (!activitiesCreated.success)
+      throw new Error("Failed to create activities");
+
+    return updatedLead;
   });
 }
 export async function deleteLead(id: string) {
