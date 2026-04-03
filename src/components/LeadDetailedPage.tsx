@@ -18,6 +18,7 @@ import { useUpdateLeads } from "@/app/services/lead/tanstack/useUpdateLeads";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDeleteLeads } from "@/app/services/lead/tanstack/useDeleteLeads";
+import { Timeline } from "./timeline";
 type LeadWithRelations = Prisma.LeadGetPayload<{
   include: {
     activities: {
@@ -268,33 +269,11 @@ export default function LeadDetailedPage({
         </TabsContent>
 
         <TabsContent value="activities">
-          <div className="mt-6 space-y-4">
-            {lead.activities.length === 0 ? (
-              <p className="text-muted-foreground text-sm">
-                No activities yet.
-              </p>
-            ) : (
-              lead.activities.map((activity) => (
-                <Card key={activity.id}>
-                  <CardContent className="pt-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold text-sm">
-                        {activity.actor.name?.charAt(0) ?? "?"}
-                      </div>
-                      <div>
-                        <p className="font-medium text-sm">
-                          {activity.actor.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {activity.actor.email}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))
-            )}
-          </div>
+          {lead.activities.length === 0 ? (
+            <p className="text-muted-foreground text-sm">No activities yet.</p>
+          ) : (
+            <Timeline leadId={lead.id} />
+          )}
         </TabsContent>
 
         <TabsContent value="reminders">

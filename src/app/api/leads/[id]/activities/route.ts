@@ -32,3 +32,30 @@ export async function GET(
     );
   }
 }
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  try {
+    const { id } = await params;
+    const profile = await authenticateUser([]);
+    const body = await request.json();
+    const result = await ActivityService.create([
+      {
+        leadId: id,
+        actorId: profile.id,
+        type: body.type,
+        content: body.content,
+      },
+    ]);
+    if (!result.success) {
+      return NextResponse.json({ error: result.error }, { status: 400 });
+    }
+    return NextResponse.json({ data: result.activities[0] }, { status: 201 });
+  } catch (error) {
+    return NextResponse.json(
+      { error: "Failed to create activity" },
+      { status: 500 },
+    );
+  }
+}

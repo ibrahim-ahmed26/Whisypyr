@@ -24,12 +24,16 @@ export async function createActivity(
     leadId: activity.leadId,
     actorId: activity.actorId,
     type: activity.type,
-    content: buildActivityContent(activity.type, activity.meta),
+    content: buildActivityContent(
+      activity.type,
+      activity.meta,
+      activity.content,
+    ),
   }));
   const createdActivites = await dbCreateActivites(activiesToCreate, tx);
   return {
     success: true as const,
-    count: createdActivites.count,
+    activities: createdActivites,
   };
 }
 export async function getActivitesByLeadId(

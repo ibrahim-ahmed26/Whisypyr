@@ -6,9 +6,27 @@ export async function dbCreateActivites(
   tx?: Prisma.TransactionClient,
 ) {
   const client = tx ?? prisma;
-  return await client.activity.createMany({
-    data: activities,
-  });
+
+  const created = await Promise.all(
+    activities.map((activity) =>
+      client.activity.create({
+        data: activity,
+        select: {
+          content: true,
+          createdAt: true,
+          type: true,
+          id: true,
+          actor: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      }),
+    ),
+  );
+
+  return created;
 }
 export async function dbGetActivitesByLeadId(
   where: Prisma.ActivityWhereInput,

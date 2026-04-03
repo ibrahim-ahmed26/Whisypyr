@@ -7,6 +7,7 @@ export const createActivitySchema = z
     leadId: z.uuid(),
     actorId: z.uuid(),
     type: z.enum(ActivityType),
+    content: z.string().optional(),
     meta: z
       .object({
         to: z.unknown(),
