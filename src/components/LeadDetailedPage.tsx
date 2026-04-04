@@ -19,6 +19,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useDeleteLeads } from "@/app/services/lead/tanstack/useDeleteLeads";
 import { Timeline } from "./timeline";
+import { useAssigmentLog } from "@/app/services/activites/tanstack/useAssigmentLog";
 type LeadWithRelations = Prisma.LeadGetPayload<{
   include: {
     activities: {
@@ -31,16 +32,23 @@ type LeadWithRelations = Prisma.LeadGetPayload<{
 }>;
 export default function LeadDetailedPage({
   lead,
+  users,
 }: {
   lead: LeadWithRelations;
+  users: { id: string; name: string }[];
 }) {
   const router = useRouter();
   const { mutate, isPending } = useUpdateLeads();
+  const { mutate: logAssignmentChange } = useAssigmentLog(lead.id);
   const { mutate: deleteMutate, isPending: isDeletePending } = useDeleteLeads();
   const [isEditing, setIsEditing] = useState(false);
   const [name, setName] = useState(lead.name);
   const [email, setEmail] = useState(lead.email);
   const [phone, setPhone] = useState(lead.phoneNumber);
+  const [assignedAgentId, setAssignedAgentId] = useState(
+    lead.assignTo?.id ?? "",
+  );
+  const [assignedAgent, setAssignedAgent] = useState(lead.assignTo?.name ?? "");
   function handleStatusChange(status: LeadStatus) {
     mutate(
       { id: lead.id, data: { status } },
@@ -59,10 +67,27 @@ export default function LeadDetailedPage({
     );
   }
   function handleSave() {
+    const isAgentChanged = assignedAgentId !== (lead.assignTo?.id ?? "");
     mutate(
-      { id: lead.id, data: { name, email, phoneNumber: phone } },
+      {
+        id: lead.id,
+        data: {
+          name,
+          email,
+          phoneNumber: phone,
+          assignToId: assignedAgentId,
+        },
+      },
       {
         onSuccess: () => {
+          if (isAgentChanged) {
+            const newAgent = assignedAgent || "Unassigned";
+            logAssignmentChange({
+              content: `lead assigned to ${newAgent}`,
+              from: lead.assignTo?.name ?? "Unassigned",
+              to: newAgent,
+            });
+          }
           setIsEditing(false);
           router.refresh();
         },
@@ -235,7 +260,6 @@ export default function LeadDetailedPage({
                   </div>
                 </CardContent>
               </Card>
-
               <Card>
                 <CardHeader>
                   <CardTitle className="text-base font-semibold">
@@ -243,18 +267,35 @@ export default function LeadDetailedPage({
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {lead.assignTo ? (
+                  {isEditing && (
+                    <Select
+                      defaultValue={lead.assignTo?.id ?? ""}
+                      onValueChange={(id) => {
+                        setAssignedAgentId(id);
+                        setAssignedAgent(
+                          users.find((u) => u.id === id)?.name ?? "",
+                        );
+                      }}
+                    >
+                      <SelectTrigger className="mb-4">
+                        <SelectValue placeholder="Select Agent Please" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {users.map((user) => (
+                          <SelectItem key={user.id} value={user.id}>
+                            {user.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                  {assignedAgent ? (
                     <div className="flex items-center gap-3">
                       <div className="w-9 h-9 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-semibold text-sm">
-                        {lead.assignTo.name?.charAt(0) ?? "S"}
+                        {assignedAgent?.charAt(0) ?? "S"}
                       </div>
                       <div>
-                        <p className="font-medium text-sm">
-                          {lead.assignTo.name}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {lead.assignTo.email}
-                        </p>
+                        <p className="font-medium text-sm">{assignedAgent}</p>
                       </div>
                     </div>
                   ) : (
@@ -269,11 +310,7 @@ export default function LeadDetailedPage({
         </TabsContent>
 
         <TabsContent value="activities">
-          {lead.activities.length === 0 ? (
-            <p className="text-muted-foreground text-sm">No activities yet.</p>
-          ) : (
-            <Timeline leadId={lead.id} />
-          )}
+          <Timeline leadId={lead.id} />
         </TabsContent>
 
         <TabsContent value="reminders">

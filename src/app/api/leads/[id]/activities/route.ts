@@ -40,6 +40,7 @@ export async function POST(
     const { id } = await params;
     const profile = await authenticateUser([]);
     const body = await request.json();
+    console.log("Received body:", body);
     const result = await ActivityService.create([
       {
         leadId: id,
@@ -49,6 +50,7 @@ export async function POST(
       },
     ]);
     if (!result.success) {
+      console.error("Error creating activity:", result.error);
       return NextResponse.json({ error: result.error }, { status: 400 });
     }
     return NextResponse.json({ data: result.activities[0] }, { status: 201 });

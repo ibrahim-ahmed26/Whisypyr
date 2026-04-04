@@ -6,13 +6,22 @@ import { columns } from "@/components/Columns";
 import { DataTable } from "@/components/data-table";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 export function LeadsTable() {
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
   const { data: leads, isPending, isError } = useLeads(pageSize, page);
-  if (isPending) return <p className="px-8 py-4">Loading...</p>;
+  if (isPending)
+    return (
+      <div className="flex items-center justify-center h-48">
+        <Button variant="outline" disabled>
+          <Spinner data-icon="inline-start" />
+          Loading...
+        </Button>
+      </div>
+    );
   if (isError)
     return (
       <p className="px-8 py-4 text-red-400 font-bold">Something went wrong</p>

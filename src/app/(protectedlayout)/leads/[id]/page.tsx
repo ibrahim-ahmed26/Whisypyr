@@ -7,6 +7,9 @@ export default async function LeadDetail({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const users = await prisma.profile.findMany({
+    where: { role: "AGENT" },
+  });
   const lead = await prisma.lead.findUnique({
     where: { id },
     include: {
@@ -22,7 +25,7 @@ export default async function LeadDetail({
   if (!lead) return <p>Lead Not Found</p>;
   return (
     <>
-      <LeadDetailedPage lead={lead} />
+      <LeadDetailedPage lead={lead} users={users} />
     </>
   );
 }

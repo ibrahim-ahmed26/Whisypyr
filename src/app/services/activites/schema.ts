@@ -16,9 +16,7 @@ export const createActivitySchema = z
       .optional(),
   })
   .superRefine((data) => {
-    if (
-      ["STATUS_CHANGE", "STAGE_CHANGE", "ASSIGNMENT_CHANGE"].includes(data.type)
-    ) {
+    if (["STATUS_CHANGE", "STAGE_CHANGE"].includes(data.type)) {
       if (!data.meta) {
         throw new Error(`Meta is required for activity type ${data.type}`);
       }
@@ -30,10 +28,6 @@ export const createActivitySchema = z
         case ActivityType.STAGE_CHANGE:
           data.meta.from = leadStageSchema.parse(data.meta.from);
           data.meta.to = leadStageSchema.parse(data.meta.to);
-          break;
-        case ActivityType.ASSIGNMENT_CHANGE:
-          data.meta.from = z.string().parse(data.meta.from); // agent name
-          data.meta.to = z.string().parse(data.meta.to); // agent name
           break;
         default:
           break;

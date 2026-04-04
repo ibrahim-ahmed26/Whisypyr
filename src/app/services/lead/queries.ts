@@ -1,9 +1,12 @@
 import { prisma } from "@/app/lib/prisma";
-import { ActivityType, Prisma } from "@/generated/prisma/client";
+import { ActivityType, Prisma, Role } from "@/generated/prisma/client";
 import { CreateLeadInput, UpdateLeadInput } from "./schema";
 import { ActivityService } from "../activites";
 import { buildLeadChangeActivities } from "./helpers";
 export function buildLeadWhereClause(profileId: string): Prisma.LeadWhereInput {
+  if (Role.ADMIN || Role.MANAGER) {
+    return {}; // return all leads for admin and manager
+  }
   return {
     OR: [{ assignToId: profileId }, { assignToId: null }],
   };

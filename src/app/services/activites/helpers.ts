@@ -11,7 +11,10 @@ export function buildActivityContent(
     case ActivityType.STAGE_CHANGE:
       return `Stage changed from ${meta?.from} to ${meta?.to}`;
     case ActivityType.ASSIGNMENT_CHANGE:
-      return `Assignment changed from ${meta?.from} to ${meta?.to}`;
+      if (meta?.from && meta?.to) {
+        return `Assignment changed from ${meta.from} to ${meta.to}`;
+      }
+      return content ?? null; // Fallback to content if meta is not properly provided
     case ActivityType.NOTE:
     case ActivityType.CALL_ATTEMPT:
       return content || null;

@@ -93,7 +93,6 @@ export function Timeline({ leadId }: { leadId: string }) {
 
   return (
     <div className="mt-6">
-      {/* Action buttons */}
       <div className="flex items-center gap-2 mb-6">
         <Button
           size="sm"
@@ -114,8 +113,6 @@ export function Timeline({ leadId }: { leadId: string }) {
           Add Note
         </Button>
       </div>
-
-      {/* Timeline list */}
       {activities.length === 0 ? (
         <p className="text-sm text-muted-foreground">No activities yet.</p>
       ) : (
@@ -181,7 +178,6 @@ export function Timeline({ leadId }: { leadId: string }) {
         </div>
       )}
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-end gap-2 pt-4 border-t">
           <span className="text-sm text-muted-foreground">
@@ -206,7 +202,6 @@ export function Timeline({ leadId }: { leadId: string }) {
         </div>
       )}
 
-      {/* Dialogs — pass page and pageSize so invalidation matches queryKey */}
       <CallLogDialog
         open={callLogOpen}
         onOpenChange={setCallLogOpen}
