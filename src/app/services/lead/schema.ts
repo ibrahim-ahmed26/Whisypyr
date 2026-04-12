@@ -24,3 +24,7 @@ export const updateLeadServiceSchema = z.object({
   assignToId: z.string().optional(),
 });
 export type UpdateLeadInput = z.infer<typeof updateLeadServiceSchema>;
+export const leadIdParamsSchema = z.object({
+  id: z.uuid(),
+});
+export type LeadIdParams = z.infer<typeof leadIdParamsSchema>;
